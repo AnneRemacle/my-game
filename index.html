@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8" />
+
+        <title>Jeu du cadenas</title>
+
+        <style>
+            body {
+                background: #f5f5f5;
+            }
+
+            h1 {
+                font-family: 'Helvetica Neue';
+                letter-spacing: 2px;
+                color: #272727;
+                text-align: center;
+                text-shadow: 0 0 2px rgba( 0, 0, 0, 0.8 );
+                text-transform: uppercase;
+            }
+
+            canvas {
+                display: block;
+                margin: 20px auto;
+                border: 1px solid rgba( 0, 50, 100, 0.4 );
+                box-shadow: 0 0 20px 0 rgba( 0, 0, 0, 0.4 );
+            }
+
+            ::selection {
+                background: transparent;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Jeu du cadenas</h1>
+
+        <canvas id="game" width="288" height="511"></canvas>
+
+        <script src="vendors/reqwest.min.js"></script>
+        <script src="cadenas.js"></script>
+        <script src="game.js"></script>
+    </body>
+</html>

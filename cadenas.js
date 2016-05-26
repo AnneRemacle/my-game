@@ -148,10 +148,14 @@
                  // var self = this;
                  if ( oEvent ) {
                      if ( ( oEvent.type === "click" || ( oEvent.type === "keyup" && oEvent.keyCode === 32 ) ) ) {
-                         if ( ( game.line.state.rotation >= ( this.state.rotation ) ) && ( game.line.state.rotation <= ( this.state.rotation + ( 14 * ( Math.PI/180 ) ) ) ) ) {
-                             console.log('touché!');
+                         if ( ( game.line.state.rotation >= ( this.state.rotation - ( 3 * ( Math.PI/180 ) ) ) ) && ( game.line.state.rotation <= ( this.state.rotation + ( 17 * ( Math.PI/180 ) ) ) ) ) {
+                             this.score.current += 1;
+                             game.line.coeff *= -1;
+                             this.state.rotation = ( Math.PI * 2 ) * Math.random();
+                             console.log(this.score.current);
+                         }else{
+                             console.log('raté!');
                          }
-                         this.state.rotation = ( Math.PI * 2 ) * Math.random();
                      }
                  }
                   // console.log(this.state.rotation);
@@ -194,6 +198,7 @@
                      "dh": 32
                  };
                  this.turn = false;
+                 this.coeff = 1;
              },
              "draw": function() {
                  var oFrom = this.frame,
@@ -223,14 +228,17 @@
                          this.turn = true;
                      }
                  }
-
                  if( this.turn ) {
-                     this.state.rotation += 1 * ( Math.PI / 180 );
+                     this.state.rotation += (1+(game.ball.score.current/10 >= 0.3 ? 0.5 : game.ball.score.current/10)) * this.coeff * ( Math.PI / 180 );
                  }
                  // console.log(this.state.rotation);
 
                  if ( this.state.rotation >= 2 * Math.PI ) {
                      this.state.rotation = 0;
+                 }
+
+                 if ( this.state.rotation < 0 ) {
+                     this.state.rotation = 2 * Math.PI;
                  }
 
                  return this.state.rotation;

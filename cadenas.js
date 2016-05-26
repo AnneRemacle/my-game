@@ -69,6 +69,9 @@
              },
              "draw": function() {
                  game._drawSpriteFromFrame( this.frame );
+             },
+             "upadate": function() {
+
              }
          };
 
@@ -117,6 +120,8 @@
                      "dw": 27,
                      "dh": 27
                  };
+
+                 this.state.rotation = ( Math.PI * 2 ) * Math.random();
              },
              "draw": function() {
                  var oFrom = this.frame,
@@ -141,15 +146,15 @@
              },
              "update": function( oEvent ) {
                  // var self = this;
-
                  if ( oEvent ) {
                      if ( ( oEvent.type === "click" || ( oEvent.type === "keyup" && oEvent.keyCode === 32 ) ) ) {
-                         this.state.rotation =  ( Math.PI * 2 ) * Math.random();
+                         if ( ( game.line.state.rotation >= ( this.state.rotation ) ) && ( game.line.state.rotation <= ( this.state.rotation + ( 14 * ( Math.PI/180 ) ) ) ) ) {
+                             console.log('touché!');
+                         }
+                         this.state.rotation = ( Math.PI * 2 ) * Math.random();
                      }
                  }
-
-                  console.log(this.state.rotation);
-
+                  // console.log(this.state.rotation);
                  if ( this.state.rotation >= 2 * Math.PI ) {
                      this.state.rotation = 0;
                  }
@@ -188,6 +193,7 @@
                      "dw": 4,
                      "dh": 32
                  };
+                 this.turn = false;
              },
              "draw": function() {
                  var oFrom = this.frame,
@@ -210,10 +216,17 @@
                 );
                  oContext.restore();
              },
-             "update": function() {
+             "update": function( oEvent ) {
                  // var self = this;
+                 if ( oEvent ) {
+                     if ( ( oEvent.type === "click" || ( oEvent.type === "keyup" && oEvent.keyCode === 32 ) ) ) {
+                         this.turn = true;
+                     }
+                 }
 
-                 this.state.rotation += 1 * ( Math.PI / 180 );
+                 if( this.turn ) {
+                     this.state.rotation += 1 * ( Math.PI / 180 );
+                 }
                  // console.log(this.state.rotation);
 
                  if ( this.state.rotation >= 2 * Math.PI ) {
@@ -288,12 +301,16 @@
              // draw line
              this.line.draw();
              this.line.update();
+
          };
 
          this.init = function() {
              if ( !this.eventsSetted ) {
                  this.app.canvas.addEventListener( "click", this.ball.update.bind( this.ball ) );
                  window.addEventListener( "keyup", this.ball.update.bind( this.ball ) );
+
+                 this.app.canvas.addEventListener( "click", this.line.update.bind( this.line ) );
+                 window.addEventListener( "keyup", this.line.update.bind( this.line ) );
 
                  this.eventsSetted = true;
              }

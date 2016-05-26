@@ -229,7 +229,7 @@
                      }
                  }
                  if( this.turn ) {
-                     this.state.rotation += (1+(game.ball.score.current/10 >= 0.3 ? 0.5 : game.ball.score.current/10)) * this.coeff * ( Math.PI / 180 );
+                     this.state.rotation += (1+(game.ball.score.current/10 >= 0.3 ? 1 : game.ball.score.current/10)) * this.coeff * ( Math.PI / 180 );
                  }
                  // console.log(this.state.rotation);
 
@@ -249,7 +249,7 @@
          this.ballsLeft = {
              "frame": {
                  "cyphers": {
-                     "sx": 276,
+                     "sx": 567,
                      "sw": 25,
                      "sh": 36,
                      "sy": {
@@ -265,6 +265,25 @@
                          "9": 526
                      }
                  }
+             },
+             "drawScore": function( iScore ) {
+                 var aScoreParts = ( iScore + "" ).split( "" ),
+                     self = this;
+
+                 aScoreParts.reverse().forEach( function( sScorePart, iIndex ) {
+                     var iDx = ( game.app.width / 2 ) - self.frame.cyphers.sw;
+
+                     game._drawSpriteFromFrame( {
+                         "sx": self.frame.cyphers.sx,
+                         "sy": self.frame.cyphers.sy[ sScorePart ],
+                         "sw": self.frame.cyphers.sw,
+                         "sh": self.frame.cyphers.sh,
+                         "dx": iDx - ( self.frame.cyphers.sw + 2 ) * iIndex + 15,
+                         "dy": game.app.height / 2 + 50,
+                         "dw": self.frame.cyphers.sw,
+                         "dh": self.frame.cyphers.sh
+                     } );
+                 } );
              }
          };
 
@@ -299,9 +318,6 @@
              // draw cadenas
              this.cadenas.draw();
 
-             // draw title
-             this.title.draw();
-
              // draw Ball
              this.ball.draw();
              this.ball.update();
@@ -310,6 +326,7 @@
              this.line.draw();
              this.line.update();
 
+             this.ballsLeft.drawScore(game.ball.score.current);
          };
 
          this.init = function() {

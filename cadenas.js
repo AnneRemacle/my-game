@@ -75,23 +75,6 @@
              }
          };
 
-         // Title
-         this.title = {
-             "frame": {
-                 "sx": 360,
-                 "sy": 446,
-                 "sw": 94,
-                 "sh": 27,
-                 "dx": game.app.width / 2 - 60,
-                 "dy": game.app.height / 2 - 240,
-                 "dw": 94,
-                 "dh": 27
-             },
-             "draw": function() {
-                 game._drawSpriteFromFrame( this.frame );
-             }
-         };
-
          // Ball
          this.ball = {
              "frame": {
@@ -148,13 +131,16 @@
                  // var self = this;
                  if ( oEvent ) {
                      if ( ( oEvent.type === "click" || ( oEvent.type === "keyup" && oEvent.keyCode === 32 ) ) ) {
-                         if ( ( game.line.state.rotation >= ( this.state.rotation - ( 3 * ( Math.PI/180 ) ) ) ) && ( game.line.state.rotation <= ( this.state.rotation + ( 17 * ( Math.PI/180 ) ) ) ) ) {
-                             this.score.current += 1;
-                             game.line.coeff *= -1;
-                             this.state.rotation = ( Math.PI * 2 ) * Math.random();
-                             console.log(this.score.current);
-                         }else{
-                             console.log('raté!');
+                         if( game.started ){
+                             if ( ( game.line.state.rotation <= ( this.state.rotation + ( 20 * ( Math.PI/180 ) ) ) ) && ( game.line.state.rotation >= ( this.state.rotation - ( 6 * ( Math.PI/180 ) ) ) ) ) {
+                                 this.score.current += 1;
+                                 game.line.coeff *= -1;
+                                 this.state.rotation = ( Math.PI * 2 ) * Math.random();
+                                 console.log( this.score.current );
+                             } else {
+                                 console.log( 'raté!' );
+                                 game.over();
+                             }
                          }
                      }
                  }
@@ -226,10 +212,11 @@
                  if ( oEvent ) {
                      if ( ( oEvent.type === "click" || ( oEvent.type === "keyup" && oEvent.keyCode === 32 ) ) ) {
                          this.turn = true;
+                         game.started = true;
                      }
                  }
                  if( this.turn ) {
-                     this.state.rotation += (1+(game.ball.score.current/10 >= 0.3 ? 1 : game.ball.score.current/10)) * this.coeff * ( Math.PI / 180 );
+                     this.state.rotation += (1+(game.ball.score.current/10 >= 0.6 ? 1 : game.ball.score.current/10)) * this.coeff * ( Math.PI / 180 );
                  }
                  // console.log(this.state.rotation);
 
@@ -246,7 +233,7 @@
              }
          };
 
-         this.ballsLeft = {
+         this.points = {
              "frame": {
                  "cyphers": {
                      "sx": 567,
@@ -285,6 +272,60 @@
                      } );
                  } );
              }
+         };
+
+         this.gameOver = {
+             "frames": {
+                 "cadre": {
+                     "sx": 334,
+                     "sy": 494,
+                     "sw": 186,
+                     "sh": 99,
+                     "dx": game.app.width / 2 - 93,
+                     "dy": game.app.height / 2 - 50,
+                     "dw": 186,
+                     "dh": 99
+                 },
+                 "cyphers": {
+                     "sx": 641,
+                     "sw": 13,
+                     "sh": 20,
+                     "sy": {
+                         "0": 157,
+                         "1": 185,
+                         "2": 214,
+                         "3": 243,
+                         "4": 272,
+                         "5": 301,
+                         "6": 330,
+                         "7": 358,
+                         "8": 387,
+                         "9": 416
+                     }
+                 }
+                },
+                "draw": function() {
+                     game._drawSpriteFromFrame( this.frames.cadre );
+                 },
+                 "drawScore": function(iScore) {
+                     var aScoreParts = ( iScore + "" ).split( "" ),
+                         self = this;
+
+                     aScoreParts.forEach( function( sScorePart, iIndex ) {
+                         var iDx = ( game.app.width / 2 ) - self.frames.cyphers.sw;
+
+                         game._drawSpriteFromFrame( {
+                             "sx": self.frames.cyphers.sx,
+                             "sy": self.frames.cyphers.sy[ sScorePart ],
+                             "sw": self.frames.cyphers.sw,
+                             "sh": self.frames.cyphers.sh,
+                             "dx": iDx - ( self.frames.cyphers.sw + 2 ) * iIndex + 20,
+                             "dy": self.frames.cadre.dy + 50,
+                             "dw": self.frames.cyphers.sw,
+                             "dh": self.frames.cyphers.sh
+                         } );
+                     } );
+                 }
          };
 
          // Fonction pour dessiner
@@ -326,7 +367,18 @@
              this.line.draw();
              this.line.update();
 
-             this.ballsLeft.drawScore(game.ball.score.current);
+             this.points.drawScore( game.ball.score.current );
+         };
+
+         this.over = function() {
+             var iCurrentScore = game.ball.score.current;
+
+             window.cancelAnimationFrame( this.animationRequestID );
+
+             this.ended = true;
+
+             game.gameOver.draw();
+             game.gameOver.drawScore( iCurrentScore );
          };
 
          this.init = function() {

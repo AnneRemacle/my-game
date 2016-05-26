@@ -278,7 +278,7 @@
                          "sy": self.frame.cyphers.sy[ sScorePart ],
                          "sw": self.frame.cyphers.sw,
                          "sh": self.frame.cyphers.sh,
-                         "dx": iDx - ( self.frame.cyphers.sw + 2 ) * iIndex + 15,
+                         "dx": iDx - ( self.frame.cyphers.sw + 2 ) * iIndex + ( ( game.ball.score.current < 10 ) ? 15 : 25 ),
                          "dy": game.app.height / 2 + 50,
                          "dw": self.frame.cyphers.sw,
                          "dh": self.frame.cyphers.sh
